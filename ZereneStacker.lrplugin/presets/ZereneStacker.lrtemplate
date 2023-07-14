@@ -1,0 +1,19 @@
+s = {
+	internalName = "Zerene Stacker",
+	title = "Zerene Stacker",
+	type = "Export",
+	value = {
+		exportServiceProvider = "com.zerenesystems.zsloader",
+		exportServiceProviderTitle = "Zerene Stacker",
+		format="TIFF",
+		tiff_compressionMethod="compressionMethod_None",
+		jpeg_quality = 1.0,
+		export_bitDepth=16,
+		export_colorSpace="AdobeRGB",
+		minimizeEmbeddedMetadata = false,
+		metadata_keywordOptions = "lightroomHierarchical",
+		removeLocationMetadata = false,
+		size_doNotEnlarge = true,
+	},
+	version = 0,
+}
