@@ -56,23 +56,6 @@ ZereneStackerUploadTask.processRenderedPhotos = function( functionContext, expor
 			title = LOC(string.format("$$$/Zerene Stacker/Upload/Progress=Exporting %d photos to Zerene Stacker", nPhotos))
 		})
 
-		-- NEW FEATURE - copy zerene batch file 
-		if true then
-			local myPath = _PLUGIN.path
-			local batchFile = LrPathUtils.child( myPath, "ZereneBatch.xml")
-			local destBatchFile = LrPathUtils.child( tempPath, "ZereneBatch.xml")
-			local success, message = LrFileUtils.copy( batchFile, destBatchFile )
-			if not success then
-				if message == nil then
-					message = " (reason unknown)"
-				end
-				ZereneStackerUploadTask.outputToLog( "Unable to copy batch file "..batchFile.." to "..destBatchFile..": "..message )
-				LrErrors.throwUserError( "Unable to copy batch file "..batchFile.." to "..destBatchFile..": "..message )
-				LrFileUtils.delete(tempPath)
-				return
-			end
-		end
-
 		for i, rendition in exportContext:renditions({stopIfCanceled = true}) do
 			local success, pathOrMessage = rendition:waitForRender()
 			sourcePath = rendition.photo:getRawMetadata( 'masterPhoto' ):getRawMetadata( 'path' )
@@ -118,6 +101,23 @@ ZereneStackerUploadTask.processRenderedPhotos = function( functionContext, expor
 		end
 	end
 	if firstSource ~= nil then
+		-- NEW FEATURE - copy zerene batch file 
+		local baseName = LrPathUtils.removeExtension(firstSource).."-"..nPhotos.." ZS "
+		ZereneStackerUploadTask.outputToLog("baseName is: " .. baseName)
+		if true then
+			local myPath = _PLUGIN.path
+			local batchFile = LrPathUtils.child( myPath, "ZereneBatch.xml")
+			if LrFileUtils.exists(batchFile) then
+				local destBatch = LrPathUtils.child( tempPath, "ZereneBatch.xml")
+				local fileData = LrFileUtils.readFile(batchFile)
+				fileData = string.gsub(fileData, "FILENAME", LrPathUtils.leafName(baseName))
+				local destBatchFile = io.open(destBatch, "w")
+				destBatchFile:write(fileData)
+				destBatchFile:flush()
+				destBatchFile:close()
+			end
+		end
+
 		if WIN_ENV then
 			--- ZereneStackerUploadTask.outputToLog( "just before LrShell.openFilesInApp" )
 			LrShell.openFilesInApp( { "-lrplugin", tempPath, "-sourcePath="..sourcePath }, prefs.zsPath )
@@ -140,7 +140,6 @@ ZereneStackerUploadTask.processRenderedPhotos = function( functionContext, expor
 		local fileListFile = io.open(fileListFilePath, "w")
 		if nil ~= fileListFile then
 			ZereneStackerUploadTask.outputToLog("file is created for writing: " .. fileListFilePath)
-			local baseName = LrPathUtils.removeExtension(firstSource).."-"..nPhotos.." ZS "
 			ZereneStackerUploadTask.outputToLog("baseName is: " .. baseName)
 			fileListFile:write(firstSource.."\n")
 			fileListFile:write(baseName .. "PMax.tif\n")

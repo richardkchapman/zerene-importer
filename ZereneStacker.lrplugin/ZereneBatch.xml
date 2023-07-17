@@ -8,7 +8,7 @@
           <Source value="%CurrentProject%" />
         </Sources>
         <ProjectDispositionCode value="101" />
-        <Tasks length="2">
+        <Tasks length="1">
           <Task>
             <OutputImageDispositionCode value="1" />
             <Preferences>
@@ -109,7 +109,7 @@
               <Interpolator.ShowAdvanced value="false" />
               <Multiprocessing.SelectedNumberOfCores value="16" />
               <Multiprocessing.UseAllCores value="true" />
-              <OutputImageNaming.Template value="{mininp:0}-{numinp} ZS {method}" />
+              <OutputImageNaming.Template value="FILENAME{method}" />
               <Precrop.LimitsString value="" />
               <Precrop.Selected value="false" />
               <Prerotation.Degrees value="0" />
@@ -271,7 +271,7 @@
               <Interpolator.ShowAdvanced value="false" />
               <Multiprocessing.SelectedNumberOfCores value="16" />
               <Multiprocessing.UseAllCores value="true" />
-              <OutputImageNaming.Template value="{mininp:0}-{numinp} ZS {method}" />
+              <OutputImageNaming.Template value="FILENAME{method}" />
               <Precrop.LimitsString value="" />
               <Precrop.Selected value="false" />
               <Prerotation.Degrees value="0" />
@@ -338,4 +338,3 @@
     </Batches>
   </BatchQueue>
 </ZereneStackerBatchScript>
-

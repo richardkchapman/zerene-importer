@@ -27,7 +27,7 @@ function auxImportFile(catalog, fileToImport, fileToStackWith)
         catalog:withWriteAccessDo("Import from Application",
           function(context)
             if nil ~= fileToStackWith then
-              photoAdded = catalog:addPhoto(fileToImport, photoToStackWith)
+              photoAdded = catalog:addPhoto(fileToImport, photoToStackWith, 'above')
               if nil ~= photoAdded then
                 logger:trace("Photo added: " .. fileToImport .. ", fileToStackWith: " .. fileToStackWith)
               else
@@ -45,9 +45,10 @@ function auxImportFile(catalog, fileToImport, fileToStackWith)
         )
       else
         logger:trace("last fileToImport has been imported before")
+        --photoAdded = nil
       end
-    -- else
-      -- logger:trace("last fileToImport does not exist")
+    else
+      logger:trace("last fileToImport does not exist")
     end
   else
     logger:trace("trying to import nil fileToImport in auxImportFile")
@@ -74,6 +75,21 @@ function tryToImportFromFile(fileName)
       end
     end
     if #importedPhotos > 0 then
+      logger:trace("Creating collection")  
+      local ziCollection = nil
+      catalog:withWriteAccessDo("Create collection",
+        function(context)
+          ziCollection = catalog:createCollection("Zerene Stacker", nil, true)
+        end
+      )
+      logger:trace("Adding to collection")  
+      catalog:withWriteAccessDo("Add to collection",
+        function(context)
+          ziCollection:addPhotos(importedPhotos)
+        end
+      )
+      logger:trace("Setting active collection")  
+      catalog:setActiveSources(ziCollection)
       catalog:setSelectedPhotos(importedPhotos[1], importedPhotos)
     end
     LrFileUtils.delete(fileName)
@@ -102,9 +118,9 @@ g_isPluginRunning = 1
 LrTasks.startAsyncTask( function()
   while g_isPluginRunning == 1 do
     if LrFileUtils.exists(triggerFileName) then
-      -- logger:trace(""..triggerFileName.." exists")
+      logger:trace(""..triggerFileName.." exists")
       if not isZereneRunning() then
-        -- logger:trace("Zerene is not running")
+        logger:trace("Zerene is not running")
         tryToImportFromFile(triggerFileName)
       end
     end
