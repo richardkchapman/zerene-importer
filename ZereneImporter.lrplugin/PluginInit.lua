@@ -60,6 +60,7 @@ function tryToImportFromFile(fileName)
   logger:trace("Test import started for file: " .. fileName)
   if LrFileUtils.exists(fileName) then
     local importedPhotos = {}
+    local firstImported = nil
     local fileData = LrFileUtils.readFile(fileName)
     local stackWith = nil
     local catalog = LrApplication.activeCatalog()
@@ -71,6 +72,9 @@ function tryToImportFromFile(fileName)
         local photoImported = auxImportFile(catalog, s, stackWith)
         if nil ~= photoImported then
           table.insert(importedPhotos, photoImported)
+          if nil == firstImported then
+            firstImported = photoImported
+          end
         end
       end
     end
@@ -90,7 +94,9 @@ function tryToImportFromFile(fileName)
       )
       logger:trace("Setting active collection")  
       catalog:setActiveSources(ziCollection)
-      catalog:setSelectedPhotos(importedPhotos[1], importedPhotos)
+      local asources = catalog:getActiveSources()  -- Seems to be needed to make sure setActiveSources has completed before setting selection
+      logger:trace("Setting selected photos "..#importedPhotos)  
+      catalog:setSelectedPhotos(firstImported, importedPhotos)
     end
     LrFileUtils.delete(fileName)
   end
