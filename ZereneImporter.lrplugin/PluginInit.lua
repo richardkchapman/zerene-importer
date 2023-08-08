@@ -23,10 +23,14 @@ function auxImportFile(catalog, fileToImport, fileToStackWith)
       if nil == photoAdded then
         if nil ~= fileToStackWith then
           photoToStackWith = catalog:findPhotoByPath(fileToStackWith)
+          -- I tend to remove the _DxO files once Zerene starts...
+          if nil == photoToStackWith then
+            photoToStackWith = catalog:findPhotoByPath(fileToStackWith:gsub("_DxO", ""))
+          end
         end
         catalog:withWriteAccessDo("Import from Application",
           function(context)
-            if nil ~= fileToStackWith then
+            if nil ~= photoToStackWith then
               photoAdded = catalog:addPhoto(fileToImport, photoToStackWith, 'above')
               if nil ~= photoAdded then
                 logger:trace("Photo added: " .. fileToImport .. ", fileToStackWith: " .. fileToStackWith)
@@ -79,20 +83,23 @@ function tryToImportFromFile(fileName)
       end
     end
     if #importedPhotos > 0 then
-      logger:trace("Creating collection")  
       local ziCollection = nil
       catalog:withWriteAccessDo("Create collection",
         function(context)
-          ziCollection = catalog:createCollection("Zerene Stacker", nil, true)
+          logger:trace("Creating collection")  
+          ziCollection = catalog:createCollection("Zerene Import", nil, true)
+          ziCollection:removeAllPhotos()
         end
       )
-      logger:trace("Adding to collection")  
       catalog:withWriteAccessDo("Add to collection",
         function(context)
+          logger:trace("Adding to collection")  
           ziCollection:addPhotos(importedPhotos)
         end
       )
       logger:trace("Setting active collection")  
+      --local folderPath = LrPathUtils.parent(firstImported.path)
+      --catalog:setActiveSources(catalog:getFolderByPath(folderPath))
       catalog:setActiveSources(ziCollection)
       local asources = catalog:getActiveSources()  -- Seems to be needed to make sure setActiveSources has completed before setting selection
       logger:trace("Setting selected photos "..#importedPhotos)  

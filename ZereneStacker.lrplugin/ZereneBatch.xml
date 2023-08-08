@@ -136,7 +136,7 @@
               <SaveImage.DefaultFolderStrategy value="WithSource" />
               <SaveImage.FileType value="tif" />
               <SaveImage.PropagateEXIF value="true" />
-              <SaveImage.RescaleImageToAvoidOverflow value="true" />
+              <SaveImage.RescaleImageToAvoidOverflow value="false" />
               <SkewSequence.NumberOfOutputImages value="3" />
               <SkewSequence.Selected value="false" />
               <SkewSequence.ShiftXPct.Limit1 value="-3.0" />
@@ -298,7 +298,7 @@
               <SaveImage.DefaultFolderStrategy value="WithSource" />
               <SaveImage.FileType value="tif" />
               <SaveImage.PropagateEXIF value="true" />
-              <SaveImage.RescaleImageToAvoidOverflow value="true" />
+              <SaveImage.RescaleImageToAvoidOverflow value="false" />
               <SkewSequence.NumberOfOutputImages value="3" />
               <SkewSequence.Selected value="false" />
               <SkewSequence.ShiftXPct.Limit1 value="-3.0" />
